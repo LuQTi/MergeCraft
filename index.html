@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Minecraft Merge</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Seite fixieren */
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            /* HINTERGRUNDBILD HIER EINFÜGEN */
+            background-image: url("Bilder/MC Hintergrund.png");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .game-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 900px;
+            height: 500px;
+            image-rendering: pixelated;
+        }
+
+        /* LADEBALKEN */
+        .loading-container {
+            position: absolute;
+            top: calc(50% + 120px);
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            height: 24px;
+            background: #2b2b2b;
+            border: 4px solid #000;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, #4CAF50, #7CFC00);
+            animation: fakeLoad 5s linear forwards; /* WICHTIG: forwards */
+        }
+
+        @keyframes fakeLoad {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        .loading-text {
+            position: absolute;
+            top: calc(50% + 155px);
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 16px;
+            text-shadow: 2px 2px 0 #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="game-container">
+        <!-- Hier kommt später dein Spiel rein -->
+    </div>
+
+    <div class="loading-container">
+        <div class="loading-bar" id="loadingBar"></div>
+    </div>
+
+    <div class="loading-text">
+        Welt wird geladen...
+    </div>
+
+    <script>
+        // Weiterleitung nach Abschluss des Ladebalkens
+        const loadTime = 5000; // muss zur Animation passen (5s)
+
+        setTimeout(() => {
+            window.location.href = "Minecraft.html";
+        }, loadTime);
+    </script>
+
+</body>
+</html>
