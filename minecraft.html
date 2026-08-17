@@ -3,260 +3,540 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Minecraft Merge</title>
+
 <style>
 
-/* ============================ BASIS ============================ */
+/* =========================================================
+   BASIS
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
 
 body {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    background: url("Bilder/MC Hintergrund.png") center/cover no-repeat fixed;
+    background: url("images/Hintergrund.png") center/cover no-repeat fixed;
     user-select: none;
     touch-action: none;
     font-family: Arial, sans-serif;
+    color: white;
 }
 
-/* ============================ GEAMTES LAYOUT ============================ */
+
+/* =========================================================
+   HUD
+========================================================= */
+
+#hud {
+    width: 360px;
+    margin: 10px auto 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    position: relative;
+    z-index: 10;
+}
+
+.hudBox {
+    flex: 1;
+    padding: 8px 5px;
+    text-align: center;
+    background: rgba(0,0,0,.55);
+    border: 2px solid rgba(255,255,255,.15);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.5);
+}
+
+.hudTitle {
+    display: block;
+    font-size: 11px;
+    opacity: .75;
+}
+
+.hudValue {
+    display: block;
+    font-size: 17px;
+    font-weight: bold;
+    text-shadow: 0 0 8px black;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+#resetGame {
+    position: absolute;
+    top: 15px;
+    right: calc(50% - 540px);
+
+    padding: 11px 18px;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    color: white;
+
+    background: linear-gradient(135deg, #8b0000, #b22222);
+
+    border: 2px solid rgba(255,255,255,.2);
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    box-shadow: 0 0 20px rgba(0,0,0,.6);
+
+    transition: .2s ease;
+
+    z-index: 1000;
+}
+
+#resetGame:hover {
+    transform: translateY(-3px);
+}
+
+
+/* =========================================================
+   SPIELFELD
+========================================================= */
 
 #game {
     width: 360px;
-    margin: 20px auto 10px auto;
+
+    margin: 18px auto 10px;
+
     display: grid;
+
     grid-template-columns: repeat(3, 120px);
     grid-template-rows: repeat(3, 120px);
+
     gap: 5px;
-	justify-content: center;
+
+    justify-content: center;
 }
 
 .cell {
     width: 120px;
     height: 120px;
-    background: rgba(0,0,0,0.25);
+
+    background: rgba(0,0,0,.28);
+
     border: 2px solid #444;
+
     position: relative;
+
     border-radius: 14px;
+
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease,
+        background .15s ease;
 }
+
+.cell.drop-target {
+    border-color: #55ff55;
+
+    background: rgba(50,255,50,.12);
+
+    box-shadow:
+        0 0 15px rgba(80,255,80,.7),
+        inset 0 0 15px rgba(80,255,80,.2);
+}
+
+.cell.merge-target {
+    border-color: #ffd700;
+
+    background: rgba(255,215,0,.12);
+
+    box-shadow:
+        0 0 20px rgba(255,215,0,.8),
+        inset 0 0 15px rgba(255,215,0,.2);
+}
+
+
+/* =========================================================
+   BLÖCKE
+========================================================= */
 
 .block {
     width: 90%;
     height: 90%;
+
     position: absolute;
+
     top: 5%;
     left: 5%;
+
     border-radius: 10px;
+
     background-size: cover;
     background-position: center;
+
+    box-shadow:
+        inset 0 0 8px rgba(255,255,255,.15),
+        0 4px 10px rgba(0,0,0,.35);
+
+    cursor: grab;
+
+    transition:
+        filter .15s ease,
+        transform .15s ease;
 }
 
-/* ============================ SPITZHACKE ============================ */
+.block:active {
+    cursor: grabbing;
+}
+
+.block:hover {
+    filter: brightness(1.12);
+}
+
+
+/* =========================================================
+   MERGE ANIMATION
+========================================================= */
+
+.merge-animation {
+    animation: mergePop .4s cubic-bezier(.2,1.5,.4,1);
+}
+
+@keyframes mergePop {
+
+    0% {
+        transform: scale(.45);
+        filter: brightness(2.5);
+    }
+
+    55% {
+        transform: scale(1.25);
+        filter: brightness(1.7);
+    }
+
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
+
+
+/* =========================================================
+   PICKAXE
+========================================================= */
 
 #pickaxeWrapper {
-    width: 120px;
-    height: 120px;
-    margin: 20px auto;
-    background: rgba(0, 0, 0, 0.45);
+    width: 110px;
+    height: 110px;
+
+    margin: 15px auto;
+
+    background: rgba(0,0,0,.5);
+
     border-radius: 20px;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 3px solid rgba(255,255,255,0.15);
-    box-shadow: 0 0 25px rgba(0,0,0,0.7);
+
+    border: 3px solid rgba(255,255,255,.15);
+
+    box-shadow:
+        0 0 25px rgba(0,0,0,.7),
+        inset 0 0 20px rgba(255,255,255,.04);
 }
 
 #pickaxe {
-    width: 90px;
+    width: 80px;
+
     cursor: pointer;
-    transition: transform 0.2s ease;
+
+    transition: transform .15s ease;
 }
 
 #pickaxe:hover {
     transform: scale(1.1);
 }
 
-/* ============================ LEVEL ANZEIGE ============================ */
+#pickaxe.hit {
+    animation: pickaxeHit .25s ease;
+}
+
+@keyframes pickaxeHit {
+
+    0% {
+        transform: rotate(0deg) scale(1);
+    }
+
+    40% {
+        transform: rotate(-28deg) scale(1.18);
+    }
+
+    75% {
+        transform: rotate(12deg) scale(1.05);
+    }
+
+    100% {
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+
+/* =========================================================
+   LEVEL / PROGRESS
+========================================================= */
 
 #levelDisplay {
+    width: 360px;
+
+    margin: 5px auto 0;
+
     text-align: center;
-    color: #fff;
-    font-size: 18px;
+
+    color: white;
+
+    font-size: 15px;
     font-weight: bold;
+
     text-shadow: 0 0 10px black;
-    margin-top: 20px;
-    line-height: 1.6;
+
+    line-height: 1.5;
 }
 
-/* ============================ POPUP ============================ */
+#progressContainer {
+    width: 300px;
+    height: 15px;
 
-#popup {
+    margin: 7px auto;
+
+    background: rgba(0,0,0,.55);
+
+    border: 2px solid rgba(255,255,255,.2);
+
+    border-radius: 10px;
+
+    overflow: hidden;
+
+    box-shadow: 0 0 10px rgba(0,0,0,.6);
+}
+
+#progressBar {
+    width: 5%;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            90deg,
+            #35b535,
+            #75ff75
+        );
+
+    transition: width .3s ease;
+
+    box-shadow: 0 0 10px #55ff55;
+}
+
+
+/* =========================================================
+   FLOATING TEXT
+========================================================= */
+
+#floatingText {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    backdrop-filter: blur(10px);
-    background: rgba(0, 0, 0, 0.45);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 999999;
-    opacity: 0;
-    animation: fadeInOverlay 0.5s ease forwards;
-}
 
-@keyframes fadeInOverlay {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
+    left: 50%;
+    top: 42%;
 
-#popupBox {
-    background: rgba(25, 25, 25, 0.55);
-    padding: 45px 55px;
-    border-radius: 28px;
-    text-align: center;
-    color: white;
-    max-width: 85%;
-    box-shadow: 0 0 60px rgba(0,0,0,0.7);
-    backdrop-filter: blur(14px);
-    transform: scale(0.8);
-    opacity: 0;
-    animation: fadeInPopup 0.7s cubic-bezier(.14,.83,.39,1.19) forwards 0.2s;
-}
+    transform: translate(-50%, -50%);
 
-@keyframes fadeInPopup {
-    0%   { opacity: 0; transform: scale(0.8); }
-    80%  { opacity: 1; transform: scale(1.05); }
-    100% { opacity: 1; transform: scale(1); }
-}
+    pointer-events: none;
 
-#popupText {
-    font-size: 34px;
-    margin-bottom: 30px;
-    text-shadow: 0 0 15px rgba(0,0,0,0.9);
+    font-size: 30px;
     font-weight: bold;
+
+    color: #fff;
+
+    text-shadow:
+        0 0 5px #000,
+        0 0 15px #000;
+
+    opacity: 0;
+
+    z-index: 5000;
 }
 
-#restartButton {
-    font-size: 26px;
-    padding: 15px 40px;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    background: linear-gradient(135deg, rgba(76,175,80,.9), rgba(56,140,60,.9));
-    color: white;
-    box-shadow: 0 0 25px rgba(0,0,0,0.5);
-    transition: 0.25s ease;
+#floatingText.show {
+    animation: floatingText .8s ease forwards;
 }
 
-#restartButton:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 0 35px rgba(76,255,100,0.5);
+@keyframes floatingText {
+
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -30%) scale(.7);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -100%) scale(1.15);
+    }
 }
 
-#restartButton:active {
-    transform: scale(0.96);
-}
 
-/* ============================ RESET BUTTON ============================ */
+/* =========================================================
+   POPUPS
+========================================================= */
 
-#resetGame {
-    position: absolute;
-    top: 60px;
-    right: calc(50% - 260px);
-    padding: 12px 22px;
-    font-size: 16px;
-    font-weight: bold;
-    color: white;
-    background: linear-gradient(135deg, #8b0000, #b22222);
-    border: 2px solid rgba(255,255,255,0.2);
-    border-radius: 14px;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    transition: 0.25s ease;
-    z-index: 1000;
-}
-
-#resetGame:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0 25px rgba(255,50,50,0.6);
-}
-
-/* ==================== RESET CONFIRM POPUP ==================== */
-
-#confirmReset {
+.overlay {
     position: fixed;
+
     inset: 0;
-    background: rgba(0,0,0,0.55);
+
+    background: rgba(0,0,0,.58);
+
     backdrop-filter: blur(10px);
+
     display: none;
+
     justify-content: center;
     align-items: center;
+
     z-index: 999999;
 }
 
-.confirmBox {
-    background: rgba(25,25,25,0.65);
-    padding: 35px 45px;
-    border-radius: 22px;
+.popupBox {
+    width: min(90%, 430px);
+
+    padding: 38px 30px;
+
+    background: rgba(25,25,25,.75);
+
+    border-radius: 25px;
+
     text-align: center;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
-    animation: popIn 0.35s ease;
-}
 
-@keyframes popIn {
-    from { transform: scale(0.85); opacity: 0; }
-    to   { transform: scale(1); opacity: 1; }
-}
-
-.confirmText {
-    font-size: 26px;
-    font-weight: bold;
     color: white;
+
+    box-shadow:
+        0 0 60px rgba(0,0,0,.8),
+        inset 0 0 20px rgba(255,255,255,.03);
+
+    animation: popupIn .4s cubic-bezier(.14,.83,.39,1.19);
+}
+
+@keyframes popupIn {
+
+    from {
+        opacity: 0;
+        transform: scale(.75);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.popupTitle {
+    font-size: 30px;
+    font-weight: bold;
+
+    margin-bottom: 15px;
+
+    text-shadow: 0 0 15px black;
+}
+
+.popupInfo {
+    font-size: 18px;
+
     margin-bottom: 25px;
-    text-shadow: 0 0 12px black;
+
+    line-height: 1.7;
+}
+
+.popupButton {
+    border: none;
+
+    padding: 13px 30px;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    color: white;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    box-shadow: 0 0 20px rgba(0,0,0,.6);
+
+    transition: .2s ease;
+}
+
+.popupButton:hover {
+    transform: translateY(-3px);
+}
+
+.greenButton {
+    background: linear-gradient(135deg,#4caf50,#2e7d32);
+}
+
+.redButton {
+    background: linear-gradient(135deg,#b22222,#8b0000);
 }
 
 .confirmButtons {
     display: flex;
-    gap: 20px;
+
     justify-content: center;
+
+    gap: 15px;
 }
 
-#confirmYes {
-    background: linear-gradient(135deg, #b22222, #8b0000);
-}
 
-#confirmNo {
-    background: linear-gradient(135deg, #4CAF50, #2e7d32);
-}
-
-.confirmButtons button {
-    border: none;
-    padding: 14px 32px;
-    font-size: 20px;
-    color: white;
-    border-radius: 14px;
-    cursor: pointer;
-    box-shadow: 0 0 20px rgba(0,0,0,0.6);
-    transition: 0.2s ease;
-}
-
-.confirmButtons button:hover {
-    transform: translateY(-3px);
-}
-
-/* ============================ MOBILE VERSION ============================ */
+/* =========================================================
+   MOBILE
+========================================================= */
 
 @media (max-width: 600px) {
 
-    #game {
-		padding-top: 80px;
+    body {
+        overflow: hidden;
+    }
+
+    #hud {
         width: 300px;
+        margin-top: 5px;
+    }
+
+    .hudBox {
+        padding: 6px 3px;
+    }
+
+    .hudTitle {
+        font-size: 9px;
+    }
+
+    .hudValue {
+        font-size: 14px;
+    }
+
+    #game {
+        width: 300px;
+
         grid-template-columns: repeat(3, 95px);
         grid-template-rows: repeat(3, 95px);
+
         gap: 6px;
-        margin: 10px auto;
+
+        margin: 8px auto;
     }
 
     .cell {
@@ -267,367 +547,1337 @@ body {
     .block {
         width: 88%;
         height: 88%;
+
+        left: 6%;
+        top: 6%;
     }
 
     #pickaxeWrapper {
         position: fixed;
-        bottom: 40px;
+
+        bottom: 30px;
         left: 50%;
+
         transform: translateX(-50%);
-        width: 100px;
-        height: 100px;
+
+        width: 90px;
+        height: 90px;
+
+        margin: 0;
+
         z-index: 999;
     }
 
     #pickaxe {
-        width: 75px;
+        width: 65px;
     }
 
     #levelDisplay {
-		margin-top: 20px;
-        font-size: 15px;
-        padding: 10px;
+        width: 300px;
+        font-size: 13px;
     }
 
-    #popupBox {
-        padding: 30px 25px;
+    #progressContainer {
+        width: 260px;
     }
 
-    #popupText {
-        font-size: 26px;
-    }
-
-    #restartButton {
-        font-size: 22px;
-        padding: 12px 30px;
-    }
-	
     #resetGame {
-        top: 20px;
-        left: calc(50% - 150px);
+        top: 5px;
+        left: 50%;
         right: auto;
-        font-size: 14px;
-        padding: 10px 18px;
+
+        transform: translateX(-50%);
+
+        font-size: 12px;
+
+        padding: 7px 12px;
+    }
+
+    #floatingText {
+        font-size: 25px;
+    }
+
+    .popupBox {
+        padding: 30px 20px;
+    }
+
+    .popupTitle {
+        font-size: 25px;
+    }
+
+    .popupInfo {
+        font-size: 16px;
     }
 }
 
 </style>
 </head>
+
+
 <body>
+
+
+<!-- =========================================================
+     HUD
+========================================================= -->
+
+<div id="hud">
+
+    <div class="hudBox">
+        <span class="hudTitle">⭐ SCORE</span>
+        <span id="scoreDisplay" class="hudValue">0</span>
+    </div>
+
+    <div class="hudBox">
+        <span class="hudTitle">🏆 REKORD</span>
+        <span id="bestDisplay" class="hudValue">0</span>
+    </div>
+
+    <div class="hudBox">
+        <span class="hudTitle">🔥 COMBO</span>
+        <span id="comboDisplay" class="hudValue">x0</span>
+    </div>
+
+</div>
+
 
 <button id="resetGame">⟲ Neu starten</button>
 
-<div id="pickaxeWrapper">
-    <img id="pickaxe" src="Bilder/Spitzhacke.png">
-</div>
+
+<!-- =========================================================
+     SPIEL
+========================================================= -->
 
 <div id="game">
-    <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-    <div class="cell"></div><div class="cell"></div><div class="cell"></div>
-    <div class="cell"></div><div class="cell"></div><div class="cell"></div>
+
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+
 </div>
 
-<div id="levelDisplay">Enter drücken um Blöcke abzubauen</div>
 
-<!-- NEUES POPUP MIT BUTTON -->
-<div id="popup">
-    <div id="popupBox">
-        <div id="popupText">🎉 Glückwunsch! Du hast das ENDE erreicht! 🎉</div>
-        <button id="restartButton">Neu starten</button>
-    </div>
+<!-- =========================================================
+     LEVEL
+========================================================= -->
+
+<div id="levelDisplay">
+    Höchster Block: <b>1</b><br>
+    Spawn-Level: <b>1</b> |
+    Merges: <b>0</b>
 </div>
-	
-<div id="confirmReset">
-    <div class="confirmBox">
-        <div class="confirmText">⚠️ Wirklich neu starten?</div>
-        <div class="confirmButtons">
-            <button id="confirmYes">Ja</button>
-            <button id="confirmNo">Nein</button>
+
+<div id="progressContainer">
+    <div id="progressBar"></div>
+</div>
+
+
+<!-- =========================================================
+     SPITZHACKE
+========================================================= -->
+
+<div id="pickaxeWrapper">
+    <img id="pickaxe" src="images/Spitzhacke.png" alt="Spitzhacke">
+</div>
+
+
+<div id="floatingText"></div>
+
+
+<!-- =========================================================
+     ENDE POPUP
+========================================================= -->
+
+<div id="popup" class="overlay">
+
+    <div class="popupBox">
+
+        <div class="popupTitle">
+            🎉 BEDROCK ERREICHT! 🎉
         </div>
+
+        <div class="popupInfo">
+
+            Du hast das maximale Level erreicht!<br><br>
+
+            ⭐ Score:
+            <b id="finalScore">0</b><br>
+
+            🏆 Rekord:
+            <b id="finalBest">0</b>
+
+        </div>
+
+        <button id="restartButton" class="popupButton greenButton">
+            Neu starten
+        </button>
+
     </div>
+
 </div>
+
+
+<!-- =========================================================
+     GAME OVER
+========================================================= -->
+
+<div id="gameOver" class="overlay">
+
+    <div class="popupBox">
+
+        <div class="popupTitle">
+            💀 Keine Züge mehr!
+        </div>
+
+        <div class="popupInfo">
+
+            Dein Spielfeld ist voll.<br><br>
+
+            ⭐ Score:
+            <b id="gameOverScore">0</b><br>
+
+            🏆 Rekord:
+            <b id="gameOverBest">0</b>
+
+        </div>
+
+        <button id="gameOverRestart" class="popupButton greenButton">
+            Neu starten
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     RESET BESTÄTIGUNG
+========================================================= -->
+
+<div id="confirmReset" class="overlay">
+
+    <div class="popupBox">
+
+        <div class="popupTitle">
+            ⚠️ Wirklich neu starten?
+        </div>
+
+        <div class="popupInfo">
+            Dein aktueller Spielstand geht verloren.
+        </div>
+
+        <div class="confirmButtons">
+
+            <button id="confirmYes"
+                    class="popupButton redButton">
+                Ja
+            </button>
+
+            <button id="confirmNo"
+                    class="popupButton greenButton">
+                Nein
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
 
 <script>
 
-function saveGame() {
-    const save = {
-        cells: [],
-        countMerge
-    };
-
-    document.querySelectorAll(".cell").forEach(cell => {
-        if (cell.children.length) {
-            save.cells.push(cell.children[0].dataset.level);
-        } else {
-            save.cells.push(null);
-        }
-    });
-
-    localStorage.setItem("minecraftMergeSave", JSON.stringify(save));
-}
-
-/* ---------------------------- BLOCK GRAFIKEN ---------------------------- */
+/* =========================================================
+   TEXTUREN
+========================================================= */
 
 const blockTextures = {
-    1: "Bilder/Gras.png",
-    2: "Bilder/Holz.png",
-    3: "Bilder/Brett.png",
-    4: "Bilder/Werkbank.png",
-    5: "Bilder/Stein.png",
-    6: "Bilder/Bruchstein.png",
-    7: "Bilder/Kohle.png",
-    8: "Bilder/Ofen.png",
-    9: "Bilder/Sand.png",
-    10:"Bilder/Glas.png",
-    11:"Bilder/Eisenerz.png",
-    12:"Bilder/Golderz.png",
-    13:"Bilder/Redstoneerz.png",
-    14:"Bilder/Diamanterz.png",
-    15:"Bilder/Smaragderz.png",
-    16:"Bilder/Obsidian.png",
-    17:"Bilder/Netherziegel.png",
-    18:"Bilder/Glowstone.png",
-    19:"Bilder/Endstone.png",
-    20:"Bilder/Bedrock.png"
+
+    1: "images/Gras.png",
+    2: "images/Holz.png",
+    3: "images/Brett.png",
+    4: "images/Werkbank.png",
+    5: "images/Stein.png",
+    6: "images/Bruchstein.png",
+    7: "images/Kohle.png",
+    8: "images/Ofen.png",
+    9: "images/Sand.png",
+    10: "images/Glas.png",
+    11: "images/Eisenerz.png",
+    12: "images/Golderz.png",
+    13: "images/Redstoneerz.png",
+    14: "images/Diamanterz.png",
+    15: "images/Smaragderz.png",
+    16: "images/Obsidian.png",
+    17: "images/Netherziegel.png",
+    18: "images/Glowstone.png",
+    19: "images/Endstone.png",
+    20: "images/Bedrock.png"
+
 };
 
-function loadGame() {
-    const data = localStorage.getItem("minecraftMergeSave");
-    if (!data) return;
 
-    const save = JSON.parse(data);
-    const cells = document.querySelectorAll(".cell");
-
-    countMerge = save.countMerge || 0;
-
-    save.cells.forEach((lvl, i) => {
-        if (lvl !== null) {
-            const block = document.createElement("div");
-            block.className = "block";
-            block.dataset.level = lvl;
-            block.style.backgroundImage = `url(${blockTextures[lvl]})`;
-            cells[i].appendChild(block);
-            enableDrag(block);
-        }
-    });
-
-    updateLevelDisplay();
-}
+/* =========================================================
+   VARIABLEN
+========================================================= */
 
 let countMerge = 0;
+let score = 0;
+let bestScore = 0;
 
-/* ---------------------------- LEVEL BERECHNUNG ---------------------------- */
-function updateLevelDisplay() {
-    const blocks = [...document.querySelectorAll(".block")];
-    let maxLvl = 1;
-    blocks.forEach(b => maxLvl = Math.max(maxLvl, parseInt(b.dataset.level)));
-
-    const spawnLevel = calculateSpawnLevel();
-
-    document.getElementById("levelDisplay").innerHTML =
-    `Höchster Block: <b>${maxLvl}</b><br>
-     Spawn-Level: <b>${spawnLevel}</b> |
-     Merges: <b>${countMerge}</b>`;
-}
-
-function getMaxLevel() {
-    let max = 1;
-    document.querySelectorAll(".block").forEach(b => {
-        max = Math.max(max, parseInt(b.dataset.level));
-    });
-    return max;
-}
-
-function calculateSpawnLevel() {
-    const max = getMaxLevel();
-
-    if (max < 9) return 1;
-    return max - 7;
-}
-
-/* ---------------------------- BLOCK SPAWN ---------------------------- */
-function removeBlocksBelowSpawnLevel() {
-    const spawnLevel = calculateSpawnLevel();
-    const blocks = [...document.querySelectorAll(".block")];
-
-    blocks.forEach(block => {
-        const lvl = parseInt(block.dataset.level);
-        if (lvl < spawnLevel) {
-            block.remove();
-        }
-    });
-}
-
-function spawnBlock(level = null) {
-    const cells = [...document.querySelectorAll(".cell")];
-    const empty = cells.filter(c => c.children.length === 0);
-    if (empty.length === 0) return;
-
-    const cell = empty[Math.floor(Math.random() * empty.length)];
-
-    const block = document.createElement("div");
-    const spawnLevel = level || calculateSpawnLevel();
-
-    block.className = "block";
-    block.dataset.level = spawnLevel;
-    block.style.backgroundImage = `url(${blockTextures[spawnLevel]})`;
-
-    cell.appendChild(block);
-
-    enableDrag(block);
-	removeBlocksBelowSpawnLevel();
-	updateLevelDisplay();
-	saveGame();
-}
-
-/* ---------------------------- MERGE ---------------------------- */
-
-function mergeBlocks(cell, level) {
-
-    cell.innerHTML = "";
-
-    const newLevel = level + 1;
-
-    const newBlock = document.createElement("div");
-    newBlock.className = "block";
-    newBlock.dataset.level = newLevel;
-    newBlock.style.backgroundImage = `url(${blockTextures[newLevel]})`;
-
-    cell.appendChild(newBlock);
-    enableDrag(newBlock);
-	
-	countMerge++;
-	saveGame();
-
-    if (newLevel >= 20) {
-        showPopup();
-    }
-}
-
-/* ---------------------------- POPUP FUNKTION ---------------------------- */
-
-function showPopup() {
-    const popup = document.getElementById("popup");
-    popup.style.display = "flex";
-
-    // Alles blockieren außer Popup
-    document.body.style.pointerEvents = "none";
-    popup.style.pointerEvents = "auto";
-}
-
-/* ---------------------------- NEUSTART ---------------------------- */
-
-document.getElementById("restartButton").onclick = () => {
-    localStorage.removeItem("minecraftMergeSave");
-    window.location.href = "index.html";
-};
-
-/* ---------------------------- DRAG & DROP ---------------------------- */
+let combo = 0;
+let lastMergeTime = 0;
 
 let dragClone = null;
 let originalBlock = null;
 let originalCell = null;
 
+let gameEnded = false;
+
+
+/* =========================================================
+   HILFSFUNKTIONEN
+========================================================= */
+
+const cells = () =>
+    [...document.querySelectorAll(".cell")];
+
+const blocks = () =>
+    [...document.querySelectorAll(".block")];
+
+function getMaxLevel() {
+
+    let max = 1;
+
+    blocks().forEach(block => {
+
+        max = Math.max(
+            max,
+            parseInt(block.dataset.level)
+        );
+
+    });
+
+    return max;
+}
+
+
+function calculateSpawnLevel() {
+
+    const max = getMaxLevel();
+
+    if (max < 9)
+        return 1;
+
+    return Math.max(1, max - 7);
+
+}
+
+
+/* =========================================================
+   SCORE
+========================================================= */
+
+function addScore(level) {
+
+    const now = Date.now();
+
+    if (now - lastMergeTime < 2500) {
+
+        combo++;
+
+    } else {
+
+        combo = 1;
+
+    }
+
+    lastMergeTime = now;
+
+    const comboMultiplier =
+        Math.max(1, combo);
+
+    const gained =
+        level * 10 * comboMultiplier;
+
+    score += gained;
+
+    if (score > bestScore) {
+        bestScore = score;
+    }
+
+    updateHUD();
+
+    if (combo >= 2) {
+
+        showFloatingText(
+            `🔥 COMBO x${combo}! +${gained}`
+        );
+
+    } else {
+
+        showFloatingText(
+            `✨ +${gained}`
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+function updateHUD() {
+
+    document.getElementById("scoreDisplay")
+        .textContent = score;
+
+    document.getElementById("bestDisplay")
+        .textContent = bestScore;
+
+    document.getElementById("comboDisplay")
+        .textContent = `x${combo}`;
+
+}
+
+
+/* =========================================================
+   LEVEL DISPLAY
+========================================================= */
+
+function updateLevelDisplay() {
+
+    const maxLvl = getMaxLevel();
+
+    const spawnLevel =
+        calculateSpawnLevel();
+
+    document.getElementById("levelDisplay").innerHTML =
+
+        `Höchster Block: <b>${maxLvl}</b><br>
+         Spawn-Level: <b>${spawnLevel}</b> |
+         Merges: <b>${countMerge}</b>`;
+
+    const progress =
+        Math.min(
+            100,
+            (maxLvl / 20) * 100
+        );
+
+    document.getElementById("progressBar")
+        .style.width = progress + "%";
+
+}
+
+
+/* =========================================================
+   SPEICHERN
+========================================================= */
+
+function saveGame() {
+
+    const save = {
+
+        cells: cells().map(cell => {
+
+            if (!cell.children.length)
+                return null;
+
+            return parseInt(
+                cell.children[0].dataset.level
+            );
+
+        }),
+
+        countMerge,
+        score,
+        bestScore
+
+    };
+
+    localStorage.setItem(
+        "minecraftMergeSave",
+        JSON.stringify(save)
+    );
+
+}
+
+
+/* =========================================================
+   LADEN
+========================================================= */
+
+function loadGame() {
+
+    const data =
+        localStorage.getItem(
+            "minecraftMergeSave"
+        );
+
+    if (!data) {
+
+        updateHUD();
+        updateLevelDisplay();
+
+        return;
+    }
+
+    try {
+
+        const save =
+            JSON.parse(data);
+
+        countMerge =
+            save.countMerge || 0;
+
+        score =
+            save.score || 0;
+
+        bestScore =
+            save.bestScore || score;
+
+        save.cells?.forEach(
+            (level, index) => {
+
+                if (level === null)
+                    return;
+
+                createBlock(
+                    cells()[index],
+                    level
+                );
+
+            }
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Spielstand konnte nicht geladen werden:",
+            error
+        );
+
+        localStorage.removeItem(
+            "minecraftMergeSave"
+        );
+
+    }
+
+    updateHUD();
+    updateLevelDisplay();
+
+}
+
+
+/* =========================================================
+   BLOCK ERSTELLEN
+========================================================= */
+
+function createBlock(cell, level) {
+
+    const block =
+        document.createElement("div");
+
+    block.className = "block";
+
+    block.dataset.level =
+        level;
+
+    block.style.backgroundImage =
+        `url("${blockTextures[level]}")`;
+
+    cell.appendChild(block);
+
+    enableDrag(block);
+
+    return block;
+
+}
+
+
+/* =========================================================
+   SPAWN
+========================================================= */
+
+function spawnBlock(level = null) {
+
+    if (gameEnded)
+        return;
+
+    const empty =
+        cells().filter(
+            cell => cell.children.length === 0
+        );
+
+    if (empty.length === 0) {
+
+        checkGameOver();
+
+        if (!gameEnded)
+            showFloatingText("⚠️ SPIELFELD VOLL!");
+
+        return;
+    }
+
+
+    const cell =
+        empty[
+            Math.floor(
+                Math.random() * empty.length
+            )
+        ];
+
+
+    let spawnLevel =
+        level ?? calculateSpawnLevel();
+
+
+    /*
+       Seltene bessere Blöcke:
+       10 % Chance auf +1 Level
+    */
+
+    if (
+        level === null &&
+        Math.random() < 0.10 &&
+        spawnLevel < 20
+    ) {
+
+        spawnLevel++;
+
+        showFloatingText(
+            "✨ SELTENER BLOCK!"
+        );
+
+    }
+
+
+    createBlock(
+        cell,
+        spawnLevel
+    );
+
+
+    animatePickaxe();
+
+    updateLevelDisplay();
+
+    saveGame();
+
+    checkGameOver();
+
+}
+
+
+/* =========================================================
+   ALTE BLÖCKE ENTFERNEN
+========================================================= */
+
+function raiseBlocksToSpawnLevel() {
+
+    const spawnLevel = calculateSpawnLevel();
+
+    blocks().forEach(block => {
+
+        let level = parseInt(block.dataset.level);
+
+        if (level < spawnLevel) {
+
+            level = spawnLevel;
+
+            block.dataset.level = level;
+
+            block.style.backgroundImage =
+                `url("${blockTextures[level]}")`;
+
+            block.classList.add("merge-animation");
+
+            setTimeout(() => {
+                block.classList.remove("merge-animation");
+            }, 450);
+        }
+
+    });
+}
+
+/* =========================================================
+   MERGE
+========================================================= */
+
+function mergeBlocks(
+    targetCell,
+    level,
+    oldBlock
+) {
+
+    const newLevel =
+        level + 1;
+
+
+    /*
+       Alten Zielblock entfernen.
+    */
+
+    targetCell.innerHTML = "";
+
+
+    const newBlock =
+        createBlock(
+            targetCell,
+            newLevel
+        );
+
+
+    /*
+       Alten gezogenen Block entfernen.
+    */
+
+    if (
+        oldBlock &&
+        oldBlock.parentElement
+    ) {
+
+        oldBlock.remove();
+
+    }
+
+
+    countMerge++;
+
+
+    addScore(newLevel);
+
+
+    /*
+       Merge-Animation
+    */
+
+    newBlock.classList.add(
+        "merge-animation"
+    );
+
+    setTimeout(() => {
+
+        newBlock.classList.remove(
+            "merge-animation"
+        );
+
+    }, 450);
+
+
+    raiseBlocksToSpawnLevel();
+
+    updateLevelDisplay();
+
+    saveGame();
+
+
+    /*
+       Ende
+    */
+
+    if (newLevel >= 20) {
+
+        setTimeout(
+            showEndPopup,
+            350
+        );
+
+        return;
+    }
+
+
+    checkGameOver();
+
+}
+
+
+/* =========================================================
+   DRAG & DROP
+========================================================= */
+
 function enableDrag(block) {
 
     block.onpointerdown = e => {
+
+        if (gameEnded)
+            return;
+
         e.preventDefault();
 
         originalBlock = block;
-        originalCell = block.parentElement;
 
-        dragClone = block.cloneNode(true);
-        dragClone.style.position = "fixed";
-        dragClone.style.pointerEvents = "none";
-        dragClone.style.width = "90px";
-        dragClone.style.height = "90px";
-        dragClone.style.zIndex = 999999;
+        originalCell =
+            block.parentElement;
 
-        document.body.appendChild(dragClone);
+	dragClone =
+            block.cloneNode(true);
+
+	dragClone.style.visibility = "visible";
+
+	originalBlock.style.visibility = "hidden";
+        
+        dragClone.style.position =
+            "fixed";
+
+        dragClone.style.pointerEvents =
+            "none";
+
+        dragClone.style.width =
+            window.innerWidth <= 600
+                ? "80px"
+                : "90px";
+
+        dragClone.style.height =
+            window.innerWidth <= 600
+                ? "80px"
+                : "90px";
+
+        dragClone.style.zIndex =
+            "999999";
+
+        dragClone.style.opacity =
+            ".9";
+
+        dragClone.style.transform =
+            "scale(1.08)";
+
+        document.body.appendChild(
+            dragClone
+        );
 
         moveClone(e);
 
-        window.onpointermove = ev => moveClone(ev);
+        window.onpointermove =
+            moveClone;
 
-        window.onpointerup = ev => {
-            finishDrag(ev);
-            window.onpointermove = null;
-            window.onpointerup = null;
-        };
+        window.onpointerup =
+            finishDrag;
+
     };
+
 }
+
+
+/* =========================================================
+   DRAG BEWEGUNG
+========================================================= */
 
 function moveClone(e) {
-    if (!dragClone) return;
-    dragClone.style.left = (e.clientX - 45) + "px";
-    dragClone.style.top = (e.clientY - 45) + "px";
+
+    if (!dragClone)
+        return;
+
+
+    const size =
+        window.innerWidth <= 600
+            ? 40
+            : 45;
+
+
+    dragClone.style.left =
+        (e.clientX - size) + "px";
+
+    dragClone.style.top =
+        (e.clientY - size) + "px";
+
+
+    /*
+       Alle alten Markierungen entfernen
+    */
+
+    cells().forEach(cell => {
+
+        cell.classList.remove(
+            "drop-target",
+            "merge-target"
+        );
+
+    });
+
+
+    /*
+       Ziel finden
+    */
+
+    const target =
+        document.elementFromPoint(
+            e.clientX,
+            e.clientY
+        );
+
+    const targetCell =
+        target?.closest(".cell");
+
+
+    if (
+        targetCell &&
+        targetCell !== originalCell
+    ) {
+
+        if (
+            targetCell.children.length === 0
+        ) {
+
+            targetCell.classList.add(
+                "drop-target"
+            );
+
+        } else {
+
+            const other =
+                targetCell.children[0];
+
+            const otherLevel =
+                parseInt(
+                    other.dataset.level
+                );
+
+            const ownLevel =
+                parseInt(
+                    originalBlock.dataset.level
+                );
+
+
+            if (
+                otherLevel === ownLevel
+            ) {
+
+                targetCell.classList.add(
+                    "merge-target"
+                );
+
+            }
+
+        }
+
+    }
+
 }
+
+
+/* =========================================================
+   DRAG ENDE
+========================================================= */
 
 function finishDrag(e) {
-    if (!dragClone) return;
 
-    const dropTarget = document.elementFromPoint(e.clientX, e.clientY);
-    const targetCell = dropTarget?.closest(".cell");
+    if (!dragClone)
+        return;
 
-    const originalLevel = parseInt(originalBlock.dataset.level);
+    const dropTarget =
+        document.elementFromPoint(
+            e.clientX,
+            e.clientY
+        );
 
-    if (targetCell && targetCell !== originalCell) {
+    const targetCell =
+        dropTarget?.closest(".cell");
 
-        if (targetCell.children.length === 0) {
-            targetCell.appendChild(originalBlock);
-        }
-        else {
-            const other = targetCell.children[0];
-            const otherLevel = parseInt(other.dataset.level);
+    const originalLevel =
+        parseInt(
+            originalBlock.dataset.level
+        );
 
-            if (otherLevel === originalLevel) {
-                mergeBlocks(targetCell, originalLevel);
-                originalBlock.remove();
-            }
+    let successfulMove = false;
+
+    cells().forEach(cell => {
+        cell.classList.remove(
+            "drop-target",
+            "merge-target"
+        );
+    });
+
+
+    // ==========================================
+    // LEERE ZIELZELLE
+    // ==========================================
+
+    if (
+        targetCell &&
+        targetCell !== originalCell &&
+        targetCell.children.length === 0
+    ) {
+
+        targetCell.appendChild(
+            originalBlock
+        );
+
+        originalBlock.style.visibility =
+            "visible";
+
+        successfulMove = true;
+    }
+
+
+    // ==========================================
+    // MERGE
+    // ==========================================
+
+    else if (
+        targetCell &&
+        targetCell !== originalCell &&
+        targetCell.children.length > 0
+    ) {
+
+        const other =
+            targetCell.children[0];
+
+        const otherLevel =
+            parseInt(
+                other.dataset.level
+            );
+
+        if (otherLevel === originalLevel) {
+
+            mergeBlocks(
+                targetCell,
+                originalLevel,
+                originalBlock
+            );
+
+            successfulMove = true;
         }
     }
+
+
+    // ==========================================
+    // NICHT ERFOLGREICH
+    // ==========================================
+
+    if (
+        !successfulMove &&
+        originalBlock
+    ) {
+
+        originalBlock.style.visibility =
+            "visible";
+    }
+
+
+    // Clone entfernen
 
     dragClone.remove();
+
     dragClone = null;
-	
-	updateLevelDisplay();
-	saveGame();
+
+    originalBlock = null;
+    originalCell = null;
+
+
+    updateLevelDisplay();
+    saveGame();
 }
 
-/* ---------------------------- PICKAXE + ENTER ---------------------------- */
+/* =========================================================
+   GAME OVER
+========================================================= */
 
-document.getElementById("pickaxe").onclick = () => spawnBlock();
-document.onkeydown = e => { if (e.key === "Enter") spawnBlock(); };
+function canMergeExist() {
 
-document.addEventListener("keydown", e => {
-    const popup = document.getElementById("popup");
+    const allBlocks = blocks();
 
-    // Wenn Popup sichtbar ist → ENTER = Neustart
-    if (popup.style.display === "flex" && e.key === "Enter") {
-        document.getElementById("restartButton").click();
+    for (let i = 0; i < allBlocks.length; i++) {
+
+        const levelA =
+            parseInt(
+                allBlocks[i].dataset.level
+            );
+
+        for (
+            let j = i + 1;
+            j < allBlocks.length;
+            j++
+        ) {
+
+            const levelB =
+                parseInt(
+                    allBlocks[j].dataset.level
+                );
+
+            if (levelA === levelB)
+                return true;
+
+        }
+
     }
-});
 
-const confirmReset = document.getElementById("confirmReset");
+    return false;
 
-document.getElementById("resetGame").onclick = () => {
-    confirmReset.style.display = "flex";
-    document.body.style.pointerEvents = "none";
-    confirmReset.style.pointerEvents = "auto";
+}
+
+
+function checkGameOver() {
+
+    if (gameEnded)
+        return;
+
+
+    const empty =
+        cells().some(
+            cell => cell.children.length === 0
+        );
+
+
+    /*
+       Solange eine Zelle frei ist,
+       kann weitergespielt werden.
+    */
+
+    if (empty)
+        return;
+
+
+    /*
+       Wenn noch ein Merge möglich ist,
+       ebenfalls kein Game Over.
+    */
+
+    if (canMergeExist())
+        return;
+
+
+    gameEnded = true;
+
+    showGameOver();
+
+}
+
+
+/* =========================================================
+   POPUPS
+========================================================= */
+
+function showEndPopup() {
+
+    document.getElementById(
+        "finalScore"
+    ).textContent = score;
+
+    document.getElementById(
+        "finalBest"
+    ).textContent = bestScore;
+
+    document.getElementById(
+        "popup"
+    ).style.display = "flex";
+
+}
+
+
+function showGameOver() {
+
+    document.getElementById(
+        "gameOverScore"
+    ).textContent = score;
+
+    document.getElementById(
+        "gameOverBest"
+    ).textContent = bestScore;
+
+    document.getElementById(
+        "gameOver"
+    ).style.display = "flex";
+
+}
+
+
+/* =========================================================
+   FLOATING TEXT
+========================================================= */
+
+function showFloatingText(text) {
+
+    const element =
+        document.getElementById(
+            "floatingText"
+        );
+
+    element.textContent = text;
+
+    element.classList.remove("show");
+
+    /*
+       Browser-Reflow erzwingen,
+       damit die Animation erneut startet.
+    */
+
+    void element.offsetWidth;
+
+    element.classList.add("show");
+
+}
+
+
+/* =========================================================
+   SPITZHACKE ANIMATION
+========================================================= */
+
+function animatePickaxe() {
+
+    const pickaxe =
+        document.getElementById(
+            "pickaxe"
+        );
+
+    pickaxe.classList.remove("hit");
+
+    void pickaxe.offsetWidth;
+
+    pickaxe.classList.add("hit");
+
+}
+
+
+/* =========================================================
+   NEUSTART
+========================================================= */
+
+function restartGame() {
+
+    localStorage.removeItem(
+        "minecraftMergeSave"
+    );
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+document.getElementById(
+    "restartButton"
+).onclick = restartGame;
+
+
+document.getElementById(
+    "gameOverRestart"
+).onclick = restartGame;
+
+
+/* =========================================================
+   PICKAXE
+========================================================= */
+
+document.getElementById(
+    "pickaxe"
+).onclick = () => {
+
+    spawnBlock();
+
 };
 
-document.getElementById("confirmYes").onclick = () => {
-    localStorage.removeItem("minecraftMergeSave");
-    window.location.href = "index.html";
+
+/* =========================================================
+   ENTER
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    e => {
+
+        if (e.key !== "Enter")
+            return;
+
+
+        const popupVisible =
+            document.getElementById(
+                "popup"
+            ).style.display === "flex";
+
+
+        const gameOverVisible =
+            document.getElementById(
+                "gameOver"
+            ).style.display === "flex";
+
+
+        const resetVisible =
+            document.getElementById(
+                "confirmReset"
+            ).style.display === "flex";
+
+
+        if (popupVisible) {
+
+            restartGame();
+
+            return;
+
+        }
+
+
+        if (gameOverVisible) {
+
+            restartGame();
+
+            return;
+
+        }
+
+
+        if (resetVisible)
+            return;
+
+
+        spawnBlock();
+
+    }
+);
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+const confirmReset =
+    document.getElementById(
+        "confirmReset"
+    );
+
+
+document.getElementById(
+    "resetGame"
+).onclick = () => {
+
+    confirmReset.style.display =
+        "flex";
+
 };
 
-document.getElementById("confirmNo").onclick = () => {
-    confirmReset.style.display = "none";
-    document.body.style.pointerEvents = "auto";
+
+document.getElementById(
+    "confirmYes"
+).onclick = restartGame;
+
+
+document.getElementById(
+    "confirmNo"
+).onclick = () => {
+
+    confirmReset.style.display =
+        "none";
+
 };
+
+
+/* =========================================================
+   START
+========================================================= */
 
 loadGame();
 
 </script>
+
 </body>
 </html>
