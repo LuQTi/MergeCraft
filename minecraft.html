@@ -1187,6 +1187,25 @@ const blockTextures = {
 };
 
 
+// =========================================================
+// BILDER VORLADEN
+// =========================================================
+
+Object.values(blockTextures).forEach(src => {
+    const img = new Image();
+    img.src = src;
+});
+
+// Hintergrund und Spitzhacke ebenfalls vorladen
+[
+    "images/Hintergrund.png",
+    "images/Spitzhacke.png"
+].forEach(src => {
+    const img = new Image();
+    img.src = src;
+});
+
+
 /* =========================================================
    VARIABLEN
 ========================================================= */
