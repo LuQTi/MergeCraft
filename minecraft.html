@@ -939,13 +939,17 @@ body {
 
 @media (max-height: 700px) and (max-width: 600px) {
 
+    body {
+	padding-bottom:8px;
+}
+
     #hud {
         margin-top: 4px;
     }
 
     #game {
-        width: min(84vw, 310px);
-        height: min(84vw, 310px);
+        width: min(70vw, 280px) !important;
+        height: min(70vw, 280px) !important;
 
         margin-top: 5px;
         margin-bottom: 4px;
@@ -961,23 +965,13 @@ body {
         margin: 3px auto;
     }
 
-    #pickaxeWrapper {
-        width: 62px;
-        height: 62px;
-
-        bottom: 35px;
-    }
-
-    #pickaxe {
-        width: 44px;
-    }
+   
 
     #resetGame {
-        bottom: 5px;
 
         font-size: 10px;
 
-        padding: 5px 10px;
+        padding: 10px;
     }
 }
 
