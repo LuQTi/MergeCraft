@@ -1,0 +1,963 @@
+/* =========================================================
+   RESET / BASIS
+========================================================= */
+
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    overflow: hidden;
+    background:
+        linear-gradient(
+            rgba(0, 0, 0, .05),
+            rgba(0, 0, 0, .20)
+        ),
+        url("../images/Hintergrund.png") center center / cover no-repeat fixed;
+
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: white;
+
+    padding: 50px 20px;
+}
+
+
+/* =========================================================
+   HAUPT-LAYOUT
+========================================================= */
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+/* =========================================================
+   HUD
+========================================================= */
+
+#hud {
+    width: min(94vw, 420px);
+
+    margin: 14px auto 0;
+
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 8px;
+
+    position: relative;
+    z-index: 10;
+}
+
+.hudBox {
+    min-width: 0;
+
+    padding: 9px 5px;
+
+    text-align: center;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(35, 35, 35, .78),
+            rgba(0, 0, 0, .62)
+        );
+
+    border: 1px solid rgba(255,255,255,.18);
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 6px 20px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.08);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.hudTitle {
+    display: block;
+
+    margin-bottom: 3px;
+
+    font-size: 10px;
+    font-weight: bold;
+
+    letter-spacing: .5px;
+
+    opacity: .72;
+}
+
+.hudValue {
+    display: block;
+
+    font-size: 18px;
+    font-weight: 900;
+
+    color: #fff;
+
+    text-shadow:
+        0 2px 5px #000,
+        0 0 10px rgba(255,255,255,.15);
+}
+
+
+/* =========================================================
+   RESET BUTTON
+========================================================= */
+
+#resetGame {
+    position: fixed;
+
+    top: 14px;
+    right: max(14px, calc(50% - 600px));
+
+    padding: 10px 16px;
+
+    color: white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #9d1717,
+            #650909
+        );
+
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 12px;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.15);
+
+    transition:
+        transform .15s ease,
+        filter .15s ease;
+
+    z-index: 1000;
+}
+
+#resetGame:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.15);
+}
+
+#resetGame:active {
+    transform: scale(.95);
+}
+
+
+/* =========================================================
+   SPIELFELD
+========================================================= */
+
+#game {
+    /*
+       Das Spielfeld bekommt eine feste maximale Breite,
+       bleibt aber immer exakt zentriert.
+    */
+
+    width: min(94vw, 420px);
+    aspect-ratio: 1 / 1;
+
+    margin: 18px auto 10px;
+
+    padding: 8px;
+
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+
+    gap: 7px;
+
+    /*
+       Dunkler Rahmen um das komplette Spielfeld
+    */
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(0,0,0,.68),
+            rgba(15,15,15,.5)
+        );
+
+    border: 2px solid rgba(255,255,255,.12);
+    border-radius: 22px;
+
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.65),
+        inset 0 0 25px rgba(0,0,0,.45),
+        inset 0 1px 0 rgba(255,255,255,.08);
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    position: relative;
+}
+
+
+/* =========================================================
+   ZELLEN
+========================================================= */
+
+.cell {
+    width: 100%;
+    height: 100%;
+
+    position: relative;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.055),
+            rgba(0,0,0,.25)
+        );
+
+    border: 2px solid rgba(255,255,255,.12);
+
+    border-radius: 14px;
+
+    box-shadow:
+        inset 0 2px 8px rgba(0,0,0,.35),
+        inset 0 -2px 5px rgba(255,255,255,.025);
+
+    transition:
+        border-color .15s ease,
+        box-shadow .15s ease,
+        background .15s ease,
+        transform .15s ease;
+}
+
+
+/* =========================================================
+   DROP TARGET
+========================================================= */
+
+.cell.drop-target {
+    border-color: #55ff55;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(80,255,80,.18),
+            rgba(30,160,30,.12)
+        );
+
+    box-shadow:
+        0 0 18px rgba(80,255,80,.75),
+        inset 0 0 18px rgba(80,255,80,.18);
+}
+
+
+/* =========================================================
+   MERGE TARGET
+========================================================= */
+
+.cell.merge-target {
+    border-color: #ffd700;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,215,0,.2),
+            rgba(180,120,0,.12)
+        );
+
+    box-shadow:
+        0 0 22px rgba(255,215,0,.85),
+        inset 0 0 18px rgba(255,215,0,.2);
+
+    transform: scale(.98);
+}
+
+
+/* =========================================================
+   BLÖCKE
+========================================================= */
+
+.block {
+    position: absolute;
+
+    width: 88%;
+    height: 88%;
+
+    left: 6%;
+    top: 6%;
+
+    border-radius: 11px;
+
+    background-size: cover;
+    background-position: center;
+
+    cursor: grab;
+
+    box-shadow:
+        inset 0 0 10px rgba(255,255,255,.16),
+        inset 0 -5px 10px rgba(0,0,0,.18),
+        0 5px 12px rgba(0,0,0,.4);
+
+    transition:
+        filter .15s ease,
+        transform .15s ease,
+        box-shadow .15s ease;
+}
+
+.block:hover {
+    filter: brightness(1.1);
+
+    box-shadow:
+        inset 0 0 10px rgba(255,255,255,.2),
+        0 6px 15px rgba(0,0,0,.5);
+}
+
+.block:active {
+    cursor: grabbing;
+}
+
+
+/* =========================================================
+   MERGE ANIMATION
+========================================================= */
+
+.merge-animation {
+    animation:
+        mergePop .4s cubic-bezier(.2,1.5,.4,1);
+}
+
+@keyframes mergePop {
+
+    0% {
+        transform: scale(.45);
+        filter: brightness(2.5);
+    }
+
+    45% {
+        transform: scale(1.2);
+        filter: brightness(1.7);
+    }
+
+    75% {
+        transform: scale(.96);
+    }
+
+    100% {
+        transform: scale(1);
+        filter: brightness(1);
+    }
+}
+
+
+/* =========================================================
+   LEVEL DISPLAY
+========================================================= */
+
+#levelDisplay {
+    width: min(94vw, 420px);
+
+    margin: 4px auto 0;
+
+    text-align: center;
+
+    color: white;
+
+    font-size: 14px;
+    font-weight: bold;
+
+    line-height: 1.45;
+
+    text-shadow:
+        0 2px 5px #000,
+        0 0 10px rgba(0,0,0,.8);
+}
+
+#levelDisplay b {
+    color: #7dff7d;
+}
+
+
+/* =========================================================
+   PROGRESS BAR
+========================================================= */
+
+#progressContainer {
+    width: min(78vw, 320px);
+    height: 14px;
+
+    margin: 7px auto;
+
+    overflow: hidden;
+
+    background:
+        rgba(0,0,0,.6);
+
+    border: 1px solid rgba(255,255,255,.18);
+
+    border-radius: 999px;
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.55),
+        inset 0 2px 5px rgba(0,0,0,.4);
+}
+
+#progressBar {
+    width: 5%;
+    height: 100%;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            90deg,
+            #249d35,
+            #4edc4e,
+            #9aff9a
+        );
+
+    box-shadow:
+        0 0 12px rgba(85,255,85,.8);
+
+    transition:
+        width .35s cubic-bezier(.2,.8,.2,1);
+}
+
+
+/* =========================================================
+   SPITZHACKE
+========================================================= */
+
+#pickaxeWrapper {
+    width: 105px;
+    height: 105px;
+
+    margin: 8px auto 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,255,255,.07),
+            rgba(0,0,0,.55)
+        );
+
+    border: 2px solid rgba(255,255,255,.14);
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.6),
+        inset 0 0 20px rgba(255,255,255,.035);
+
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+
+    z-index: 20;
+}
+
+#pickaxe {
+    width: 78px;
+
+    cursor: pointer;
+
+    filter:
+        drop-shadow(0 5px 6px rgba(0,0,0,.5));
+
+    transition:
+        transform .15s ease,
+        filter .15s ease;
+}
+
+#pickaxe:hover {
+    transform: scale(1.08);
+
+    filter:
+        drop-shadow(0 5px 8px rgba(0,0,0,.65))
+        brightness(1.1);
+}
+
+#pickaxe:active {
+    transform: scale(.94);
+}
+
+
+/* =========================================================
+   PICKAXE HIT
+========================================================= */
+
+#pickaxe.hit {
+    animation: pickaxeHit .25s ease;
+}
+
+@keyframes pickaxeHit {
+
+    0% {
+        transform: rotate(0) scale(1);
+    }
+
+    35% {
+        transform: rotate(-28deg) scale(1.16);
+    }
+
+    70% {
+        transform: rotate(12deg) scale(1.05);
+    }
+
+    100% {
+        transform: rotate(0) scale(1);
+    }
+}
+
+
+/* =========================================================
+   FLOATING TEXT
+========================================================= */
+
+#floatingText {
+    position: fixed;
+
+    left: 50%;
+    top: 42%;
+
+    transform:
+        translate(-50%, -50%);
+
+    pointer-events: none;
+
+    font-size: clamp(22px, 7vw, 32px);
+    font-weight: 900;
+
+    color: white;
+
+    text-align: center;
+
+    white-space: nowrap;
+
+    text-shadow:
+        0 2px 4px #000,
+        0 0 12px #000,
+        0 0 22px rgba(255,255,255,.2);
+
+    opacity: 0;
+
+    z-index: 5000;
+}
+
+#floatingText.show {
+    animation:
+        floatingText .8s ease forwards;
+}
+
+@keyframes floatingText {
+
+    0% {
+        opacity: 0;
+
+        transform:
+            translate(-50%, -30%)
+            scale(.7);
+    }
+
+    20% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+
+        transform:
+            translate(-50%, -100%)
+            scale(1.15);
+    }
+}
+
+
+/* =========================================================
+   POPUPS / OVERLAYS
+========================================================= */
+
+.overlay {
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(0,0,0,.65);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    z-index: 999999;
+}
+
+.popupBox {
+    width: min(92vw, 440px);
+
+    padding: 34px 25px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(40,40,40,.94),
+            rgba(15,15,15,.92)
+        );
+
+    border: 1px solid rgba(255,255,255,.14);
+
+    border-radius: 25px;
+
+    text-align: center;
+
+    color: white;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.8),
+        inset 0 1px 0 rgba(255,255,255,.08);
+
+    animation:
+        popupIn .4s cubic-bezier(.14,.83,.39,1.19);
+}
+
+@keyframes popupIn {
+
+    from {
+        opacity: 0;
+        transform: scale(.75);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.popupTitle {
+    margin-bottom: 15px;
+
+    font-size: clamp(24px, 7vw, 32px);
+    font-weight: 900;
+
+    text-shadow:
+        0 3px 8px #000;
+}
+
+.popupInfo {
+    margin-bottom: 25px;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+}
+
+.popupButton {
+    min-width: 130px;
+
+    padding: 13px 25px;
+
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 14px;
+
+    color: white;
+
+    font-size: 18px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 6px 18px rgba(0,0,0,.5),
+        inset 0 1px 0 rgba(255,255,255,.12);
+
+    transition:
+        transform .15s ease,
+        filter .15s ease;
+}
+
+.popupButton:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+}
+
+.popupButton:active {
+    transform: scale(.96);
+}
+
+.greenButton {
+    background:
+        linear-gradient(
+            135deg,
+            #4caf50,
+            #247d2a
+        );
+}
+
+.redButton {
+    background:
+        linear-gradient(
+            135deg,
+            #b22222,
+            #760d0d
+        );
+}
+
+.confirmButtons {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 12px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (min-width: 601px) {
+
+    #game {
+        width: 420px;
+    }
+
+    #pickaxeWrapper {
+        margin-top: 10px;
+    }
+}
+
+
+/* =========================================================
+   HANDY
+========================================================= */
+
+@media (max-width: 600px) {
+
+    body {
+        /*
+           Verhindert, dass durch Browser-UI
+           unnötig Platz verloren geht.
+        */
+
+        min-height: 100dvh;
+        height: 100dvh;
+    }
+
+
+    /* -------------------------
+       HUD
+    ------------------------- */
+
+    #hud {
+        width: min(92vw, 360px);
+
+        margin-top: 12px;
+
+        gap: 5px;
+    }
+
+    .hudBox {
+        padding: 6px 3px;
+
+        border-radius: 11px;
+    }
+
+    .hudTitle {
+        font-size: 8px;
+        letter-spacing: .2px;
+    }
+
+    .hudValue {
+        font-size: 14px;
+    }
+
+    /* =========================================================
+   	RESET BUTTON
+    ========================================================= */
+
+    #resetGame {
+
+	font-size: 12px;
+    }
+
+
+
+    /* -------------------------
+       SPIELFELD
+    ------------------------- */
+
+    #game {
+        /*
+           Das ist der wichtigste Teil:
+
+           Das Spielfeld passt sich automatisch
+           an die Bildschirmbreite an.
+        */
+
+        width: min(92vw, 360px);
+        height: min(92vw, 360px);
+
+        margin:
+            clamp(8px, 2.5vh, 16px)
+            auto
+            7px;
+
+        padding: 6px;
+
+        gap: 5px;
+
+        border-radius: 18px;
+    }
+
+    .cell {
+        border-radius: 11px;
+
+        border-width: 1.5px;
+    }
+
+    .block {
+        width: 88%;
+        height: 88%;
+
+        left: 6%;
+        top: 6%;
+
+        border-radius: 9px;
+    }
+
+
+    /* -------------------------
+       LEVEL
+    ------------------------- */
+
+    #levelDisplay {
+        width: 92vw;
+
+        margin-top: 2px;
+
+        font-size: 11px;
+
+        line-height: 1.35;
+    }
+
+
+    /* -------------------------
+       PROGRESS
+    ------------------------- */
+
+    #progressContainer {
+        width: min(75vw, 280px);
+
+        height: 11px;
+
+        margin: 5px auto;
+    }
+
+
+    /* -------------------------
+       POPUPS
+    ------------------------- */
+
+    .overlay {
+        padding: 15px;
+    }
+
+    .popupBox {
+        width: 92vw;
+
+        padding: 27px 18px;
+
+        border-radius: 21px;
+    }
+
+    .popupTitle {
+        font-size: 24px;
+
+        line-height: 1.2;
+    }
+
+    .popupInfo {
+        font-size: 15px;
+
+        line-height: 1.6;
+    }
+
+    .popupButton {
+        min-width: 110px;
+
+        padding: 11px 18px;
+
+        font-size: 16px;
+    }
+}
+
+/* =========================================================
+   EXTRA BREITE HANDYS
+========================================================= */
+
+@media (min-width: 390px) and (max-width: 600px) {
+
+    #game {
+        width: min(90vw, 370px);
+        height: min(90vw, 370px);
+    }
+
+    #hud {
+        width: min(90vw, 370px);
+    }
+}
+
+
+/* =========================================================
+   TOUCH-GERÄTE
+========================================================= */
+
+@media (hover: none) {
+
+    .block:hover {
+        filter: none;
+    }
+
+    #pickaxe:hover {
+        transform: none;
+    }
+
+    .popupButton:hover {
+        transform: none;
+    }
+
+    #resetGame:hover {
+        transform: translateX(-50%);
+    }
+}

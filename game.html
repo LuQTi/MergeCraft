@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<title>MergeCraft</title>
+
+<link rel="icon" type="image/png" href="images/favicon.png">
+
+<link rel="stylesheet" href="css/style.css">
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HUD
+========================================================= -->
+
+<div id="hud">
+
+    <div class="hudBox">
+        <span class="hudTitle">⭐ SCORE</span>
+        <span id="scoreDisplay" class="hudValue">0</span>
+    </div>
+
+    <div class="hudBox">
+        <span class="hudTitle">🏆 REKORD</span>
+        <span id="bestDisplay" class="hudValue">0</span>
+    </div>
+
+    <div class="hudBox">
+        <span class="hudTitle">🔥 COMBO</span>
+        <span id="comboDisplay" class="hudValue">x0</span>
+    </div>
+
+</div>
+
+
+<button id="resetGame">⟲ Neu starten</button>
+
+
+<!-- =========================================================
+     SPIEL
+========================================================= -->
+
+<div id="game">
+
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+
+    <div class="cell"></div>
+    <div class="cell"></div>
+    <div class="cell"></div>
+
+</div>
+
+
+<!-- =========================================================
+     LEVEL
+========================================================= -->
+
+<div id="levelDisplay">
+    Höchster Block: <b>1</b><br>
+    Spawn-Level: <b>1</b> |
+    Merges: <b>0</b>
+</div>
+
+<div id="progressContainer">
+    <div id="progressBar"></div>
+</div>
+
+
+<!-- =========================================================
+     SPITZHACKE
+========================================================= -->
+
+<div id="pickaxeWrapper">
+    <img id="pickaxe" src="images/Spitzhacke.png" alt="Spitzhacke">
+</div>
+
+
+<div id="floatingText"></div>
+
+
+<!-- =========================================================
+     ENDE POPUP
+========================================================= -->
+
+<div id="popup" class="overlay">
+
+    <div class="popupBox">
+
+        <div class="popupTitle">
+            🎉 BEDROCK ERREICHT! 🎉
+        </div>
+
+        <div class="popupInfo">
+
+            Du hast das maximale Level erreicht!<br><br>
+
+            ⭐ Score:
+            <b id="finalScore">0</b><br>
+
+            🏆 Rekord:
+            <b id="finalBest">0</b>
+
+        </div>
+
+        <button id="restartButton" class="popupButton greenButton">
+            Neu starten
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     GAME OVER
+========================================================= -->
+
+<div id="gameOver" class="overlay">
+
+    <div class="popupBox">
+
+        <div class="popupTitle">
+            💀 Keine Züge mehr!
+        </div>
+
+        <div class="popupInfo">
+
+            Dein Spielfeld ist voll.<br><br>
+
+            ⭐ Score:
+            <b id="gameOverScore">0</b><br>
+
+            🏆 Rekord:
+            <b id="gameOverBest">0</b>
+
+        </div>
+
+        <button id="gameOverRestart" class="popupButton greenButton">
+            Neu starten
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     RESET BESTÄTIGUNG
+========================================================= -->
+
+<div id="confirmReset" class="overlay">
+
+    <div class="popupBox">
+
+        <div class="popupTitle">
+            ⚠️ Wirklich neu starten?
+        </div>
+
+        <div class="popupInfo">
+            Dein aktueller Spielstand geht verloren.
+        </div>
+
+        <div class="confirmButtons">
+
+            <button id="confirmYes"
+                    class="popupButton redButton">
+                Ja
+            </button>
+
+            <button id="confirmNo"
+                    class="popupButton greenButton">
+                Nein
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="js/script.js"></script>
+
+</body>
+</html>
